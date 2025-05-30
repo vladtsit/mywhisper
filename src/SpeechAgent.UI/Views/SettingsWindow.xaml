@@ -1,0 +1,185 @@
+<Window x:Class="SpeechAgent.UI.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SpeechAgent.UI.Views"
+        Title="Settings" Height="600" Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <Style x:Key="SettingsButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1976D2"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1565C0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#CCCCCC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource SettingsButtonStyle}">
+            <Setter Property="Background" Value="#757575"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#616161"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#424242"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource SettingsButtonStyle}">
+            <Setter Property="Background" Value="#F44336"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D32F2F"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#C62828"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SettingsTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#2196F3"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#2196F3"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Settings" FontSize="24" FontWeight="Bold" 
+                       HorizontalAlignment="Center" Margin="0,0,0,5"/>
+            <TextBlock Text="Configure your Azure OpenAI settings" FontSize="12" 
+                       Foreground="#666" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Settings Form -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Azure OpenAI Configuration -->
+                <GroupBox Header="Azure OpenAI Configuration" Margin="0,0,0,15">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Endpoint -->
+                        <TextBlock Grid.Row="0" Text="Endpoint URL:" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <TextBox Grid.Row="1" Text="{Binding Endpoint, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource SettingsTextBoxStyle}" Margin="0,0,0,10"/>
+
+                        <!-- API Key -->
+                        <TextBlock Grid.Row="2" Text="API Key:" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <PasswordBox Grid.Row="3" x:Name="ApiKeyPasswordBox"
+                                     Style="{StaticResource PasswordBoxStyle}" Margin="0,0,0,10"/>
+
+                        <!-- Whisper Deployment -->
+                        <TextBlock Grid.Row="4" Text="Whisper Deployment Name:" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <TextBox Grid.Row="5" Text="{Binding WhisperDeployment, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource SettingsTextBoxStyle}" Margin="0,0,0,10"/>
+
+                        <!-- Correction Deployment -->
+                        <TextBlock Grid.Row="6" Text="Text Correction Deployment Name:" FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <TextBox Grid.Row="7" Text="{Binding CorrectionDeployment, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource SettingsTextBoxStyle}" Margin="0,0,0,10"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Text Correction Prompt -->
+                <GroupBox Header="Text Correction Prompt" Margin="0,0,0,15">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Custom prompt for text correction:" 
+                                   FontWeight="SemiBold" Margin="0,5,0,5"/>
+                        <TextBox Grid.Row="1" Text="{Binding CorrectionPrompt, UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap" AcceptsReturn="True" MinHeight="120"
+                                 Style="{StaticResource SettingsTextBoxStyle}"
+                                 VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Status Message -->
+        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" 
+                   HorizontalAlignment="Center" Margin="0,10"
+                   FontWeight="SemiBold" Foreground="#2196F3"/>
+
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" 
+                    HorizontalAlignment="Center" Margin="0,15,0,0">
+            <Button Content="Save Settings" Command="{Binding SaveCommand}"
+                    Style="{StaticResource SettingsButtonStyle}"
+                    IsEnabled="{Binding IsSaving, Converter={x:Static local:BooleanInverseConverter.Instance}}"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}"/>
+            <Button Content="Reset to Defaults" Command="{Binding ResetToDefaultsCommand}"
+                    Style="{StaticResource DangerButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Window>

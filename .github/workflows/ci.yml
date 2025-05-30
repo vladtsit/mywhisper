@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger trx --results-directory TestResults/
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+
+    - name: Publish build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          src/SpeechAgent.UI/bin/Release/net8.0-windows/
+          !src/SpeechAgent.UI/bin/Release/net8.0-windows/*.pdb
+
+  code-quality:
+    runs-on: windows-latest
+    needs: build-and-test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install code analysis tools
+      run: dotnet tool install --global dotnet-format
+
+    - name: Run code formatting check
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+
+    - name: Run security scan
+      run: dotnet list package --vulnerable --include-transitive
