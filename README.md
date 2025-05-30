@@ -2,6 +2,8 @@
 
 A comprehensive Windows desktop application that processes audio through live microphone recording or file uploads, transcribes speech using Azure OpenAI Whisper, corrects text using GPT-4, and provides advanced file management and logging capabilities.
 
+![Application Screenshot](docs/AppScreen.png)
+
 ## Features
 
 ### Core Audio Processing
