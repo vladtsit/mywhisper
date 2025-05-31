@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
 env:
   DOTNET_VERSION: '8.0.x'
   SOLUTION_FILE: 'speech-agent.sln'
@@ -112,8 +117,13 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [test, build-standalone, code-quality]
     runs-on: windows-latest
+    permissions:
+      contents: write
     
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
@@ -121,22 +131,14 @@ jobs:
         merge-multiple: true
         
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
         draft: false
         prerelease: false
-        
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
+        files: |
+          ./SpeechAgent-win-x64.exe
+        generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SpeechAgent-win-x64.exe
-        asset_name: SpeechAgent-win-x64.exe
-        asset_content_type: application/octet-stream
