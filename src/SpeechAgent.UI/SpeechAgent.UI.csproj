@@ -6,20 +6,27 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
   </ItemGroup>
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <!-- Default runtime identifier for Windows -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <!-- Publishing properties for standalone executable -->
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Release'">true</PublishReadyToRun>
     <IncludeNativeLibrariesForSelfExtract Condition="'$(Configuration)' == 'Release'">true</IncludeNativeLibrariesForSelfExtract>
     <DebugType Condition="'$(Configuration)' == 'Release'">embedded</DebugType>
     <EnableCompressionInSingleFile Condition="'$(Configuration)' == 'Release'">true</EnableCompressionInSingleFile>
+    <!-- Trim unused code to reduce size -->
+    <PublishTrimmed Condition="'$(Configuration)' == 'Release'">false</PublishTrimmed>
+    <!-- Assembly metadata -->
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyTitle>Speech Agent</AssemblyTitle>
+    <AssemblyDescription>AI-powered speech transcription and correction tool</AssemblyDescription>
   </PropertyGroup>
 
 </Project>

@@ -1,0 +1,40 @@
+{
+    "name": "Speech Agent Development",
+    "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/node:1": {
+            "nodeGypDependencies": true,
+            "version": "lts"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.vscodeintellicode-csharp",
+                "ms-vscode.vscode-json",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "ms-vscode.powershell",
+                "formulahendry.dotnet-test-explorer",
+                "jmrog.vscode-nuget-package-manager"
+            ],
+            "settings": {
+                "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+                "omnisharp.enableEditorConfigSupport": true,
+                "omnisharp.enableRoslynAnalyzers": true,
+                "files.exclude": {
+                    "**/bin": true,
+                    "**/obj": true
+                }
+            }
+        }
+    },
+    "forwardPorts": [5000, 5001],
+    "postCreateCommand": "dotnet restore",
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
+    ]
+}
