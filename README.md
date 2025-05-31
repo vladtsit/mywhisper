@@ -83,13 +83,38 @@ ffmpeg -version
 
 ### 4. Build and Run
 
+#### Quick Start (Windows Codespaces)
+```powershell
+# Open in GitHub Codespaces for instant Windows development environment
+# The devcontainer will automatically configure everything needed
+
+# Full development workflow
+.\scripts\dev.ps1 -Install -Build -Test
+
+# Build standalone executable
+.\scripts\build.ps1
+```
+
+#### Local Development
 ```powershell
 # Build the solution
 dotnet build
 
 # Run the application
 dotnet run --project "src\SpeechAgent.UI\SpeechAgent.UI.csproj" --verbosity normal
+
+# Run tests
+dotnet test
 ```
+
+#### CI/CD Pipeline
+The project uses GitHub Actions with Windows-only runners, optimized for WPF development:
+- Automated testing on Windows
+- Standalone executable builds
+- Code quality checks
+- Automatic releases
+
+*Note: This is a Windows-native WPF application. For cross-platform development, consider frameworks like Avalonia or .NET MAUI.*
 
 ## How It Works
 

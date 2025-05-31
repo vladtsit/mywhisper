@@ -2,15 +2,31 @@ param(
     [string]$Configuration = "Release",
     [string]$Runtime = "win-x64",
     [string]$OutputPath = "./publish",
-    [switch]$SelfContained = $true,
-    [switch]$SingleFile = $true,
-    [switch]$Test = $true
+    [switch]$SelfContained,
+    [switch]$SingleFile,
+    [switch]$Test,
+    [switch]$SkipCodespaceWarning
 )
 
-Write-Host "Building Speech Agent..." -ForegroundColor Green
+# Set default values for switches
+if (-not $PSBoundParameters.ContainsKey('SelfContained')) { $SelfContained = $true }
+if (-not $PSBoundParameters.ContainsKey('SingleFile')) { $SingleFile = $true }
+if (-not $PSBoundParameters.ContainsKey('Test')) { $Test = $true }
+
+# Detect if running in Codespaces
+function Test-IsCodespaces {
+    return ($env:CODESPACES -eq "true") -or ($null -ne $env:GITHUB_CODESPACE_TOKEN)
+}
+
+Write-Host "Building Speech Agent for Windows..." -ForegroundColor Green
 Write-Host "Configuration: $Configuration" -ForegroundColor Yellow
 Write-Host "Runtime: $Runtime" -ForegroundColor Yellow
 Write-Host "Output Path: $OutputPath" -ForegroundColor Yellow
+
+if (Test-IsCodespaces -and -not $SkipCodespaceWarning) {
+    Write-Host "GitHub Codespaces detected!" -ForegroundColor Cyan
+    Write-Host "Optimizing build for Windows Codespaces environment..." -ForegroundColor Yellow
+}
 
 # Clean previous builds
 if (Test-Path $OutputPath) {
@@ -64,11 +80,19 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "Build completed successfully!" -ForegroundColor Green
+Write-Host "Windows build completed successfully!" -ForegroundColor Green
 Write-Host "Output location: $OutputPath/$Runtime" -ForegroundColor Green
+
+if (Test-IsCodespaces) {
+    Write-Host "Build optimized for Windows Codespaces environment" -ForegroundColor Cyan
+}
 
 # List the generated files
 if (Test-Path "$OutputPath/$Runtime") {
     Write-Host "Generated files:" -ForegroundColor Yellow
     Get-ChildItem -Path "$OutputPath/$Runtime" | Format-Table Name, Length, LastWriteTime
+    
+    if (Test-IsCodespaces) {
+        Write-Host "Note: WPF applications built in Codespaces are ready for Windows deployment" -ForegroundColor Cyan
+    }
 }

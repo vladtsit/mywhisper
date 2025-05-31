@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+﻿name: CI/CD Pipeline
 
 on:
   push:
@@ -13,10 +13,7 @@ env:
 jobs:
   test:
     name: Run Tests
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -39,20 +36,13 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-${{ matrix.os }}
+        name: test-results-windows
         path: TestResults/
+
   build-standalone:
-    name: Build Standalone Executables
+    name: Build Standalone Executable
     needs: test
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            runtime: win-x64
-            output-name: SpeechAgent-win-x64.exe
-          # Note: WPF apps only run on Windows, so we only build for Windows
-          # For cross-platform support, consider using Avalonia or MAUI instead
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -67,41 +57,34 @@ jobs:
 
     - name: Publish standalone executable
       run: |
-        dotnet publish src/SpeechAgent.UI/SpeechAgent.UI.csproj \
-          --configuration Release \
-          --runtime ${{ matrix.runtime }} \
-          --self-contained true \
-          --output ./publish/${{ matrix.runtime }} \
-          /p:PublishSingleFile=true \
-          /p:PublishReadyToRun=true \
-          /p:IncludeNativeLibrariesForSelfExtract=true \
-          /p:EnableCompressionInSingleFile=true \
+        dotnet publish src/SpeechAgent.UI/SpeechAgent.UI.csproj `
+          --configuration Release `
+          --runtime win-x64 `
+          --self-contained true `
+          --output ./publish/win-x64 `
+          /p:PublishSingleFile=true `
+          /p:PublishReadyToRun=true `
+          /p:IncludeNativeLibrariesForSelfExtract=true `
+          /p:EnableCompressionInSingleFile=true `
           /p:DebugType=embedded
 
-    - name: Rename executable (Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Rename executable
       run: |
-        if (Test-Path "./publish/${{ matrix.runtime }}/SpeechAgent.UI.exe") {
-          Rename-Item "./publish/${{ matrix.runtime }}/SpeechAgent.UI.exe" "${{ matrix.output-name }}"
+        if (Test-Path "./publish/win-x64/SpeechAgent.UI.exe") {
+          Rename-Item "./publish/win-x64/SpeechAgent.UI.exe" "SpeechAgent-win-x64.exe"
         }
       shell: powershell
-
-    - name: Rename executable (Unix)
-      if: matrix.os != 'windows-latest'
-      run: |
-        if [ -f "./publish/${{ matrix.runtime }}/SpeechAgent.UI" ]; then
-          mv "./publish/${{ matrix.runtime }}/SpeechAgent.UI" "./publish/${{ matrix.runtime }}/${{ matrix.output-name }}"
-        fi
 
     - name: Upload standalone executable
       uses: actions/upload-artifact@v4
       with:
-        name: standalone-${{ matrix.runtime }}
-        path: ./publish/${{ matrix.runtime }}/${{ matrix.output-name }}
+        name: standalone-win-x64
+        path: ./publish/win-x64/SpeechAgent-win-x64.exe
         retention-days: 30
+
   code-quality:
     name: Code Quality Check
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: test
 
     steps:
@@ -123,11 +106,12 @@ jobs:
 
     - name: Run security scan
       run: dotnet list package --vulnerable --include-transitive
+
   create-release:
     name: Create Release
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [test, build-standalone, code-quality]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
     - name: Download all artifacts

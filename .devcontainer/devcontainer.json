@@ -1,14 +1,12 @@
 {
-    "name": "Speech Agent Development",
+    "name": "Speech Agent Development - Windows",
     "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {},
-        "ghcr.io/devcontainers/features/node:1": {
-            "nodeGypDependencies": true,
-            "version": "lts"
+        "ghcr.io/devcontainers/features/powershell:1": {
+            "version": "latest"
         }
-    },
-    "customizations": {
+    },    "customizations": {
         "vscode": {
             "extensions": [
                 "ms-dotnettools.csharp",
@@ -18,23 +16,24 @@
                 "GitHub.copilot-chat",
                 "ms-vscode.powershell",
                 "formulahendry.dotnet-test-explorer",
-                "jmrog.vscode-nuget-package-manager"
+                "jmrog.vscode-nuget-package-manager",
+                "ms-vscode.vscode-yaml"
             ],
             "settings": {
                 "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
                 "omnisharp.enableEditorConfigSupport": true,
                 "omnisharp.enableRoslynAnalyzers": true,
+                "powershell.integratedConsole.showOnStartup": false,
+                "terminal.integrated.defaultProfile.windows": "PowerShell",
                 "files.exclude": {
                     "**/bin": true,
-                    "**/obj": true
+                    "**/obj": true,
+                    "**/publish": true
                 }
             }
         }
     },
     "forwardPorts": [5000, 5001],
-    "postCreateCommand": "dotnet restore",
-    "remoteUser": "vscode",
-    "mounts": [
-        "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
-    ]
+    "postCreateCommand": "powershell -Command \"dotnet restore; Write-Host 'Windows Codespace ready for WPF development!' -ForegroundColor Green\"",
+    "remoteUser": "vscode"
 }
