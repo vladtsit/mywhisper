@@ -22,8 +22,8 @@ public class LogService : ILogService
         _logEntries = new ObservableCollection<LogEntry>();
     }
 
-    public IReadOnlyList<LogEntry> LogEntries 
-    { 
+    public IReadOnlyList<LogEntry> LogEntries
+    {
         get
         {
             lock (_lock)
@@ -90,7 +90,7 @@ public class LogService : ILogService
         lock (_lock)
         {
             _logEntries.Add(logEntry);
-            
+
             // Keep only the last 1000 entries to prevent memory issues
             if (_logEntries.Count > 1000)
             {

@@ -13,19 +13,19 @@ namespace SpeechAgent.UI.Views;
 public partial class SettingsWindow : Window
 {
     private readonly SettingsViewModel _viewModel;    /// <summary>
-    /// Event raised when settings are successfully saved
-    /// </summary>
+                                                      /// Event raised when settings are successfully saved
+                                                      /// </summary>
     public event EventHandler? SettingsSaved;
 
     public SettingsWindow(ISettingsService settingsService)
     {
         InitializeComponent();
-          _viewModel = new SettingsViewModel(settingsService);
+        _viewModel = new SettingsViewModel(settingsService);
         DataContext = _viewModel;
-        
+
         // Subscribe to view model events
         _viewModel.CloseRequested += (s, e) => Close();
-        _viewModel.SettingsSaved += (s, e) => 
+        _viewModel.SettingsSaved += (s, e) =>
         {
             // Settings were saved successfully - notify any external listeners
             SettingsSaved?.Invoke(this, EventArgs.Empty);
@@ -34,7 +34,7 @@ public partial class SettingsWindow : Window
         // Handle password box binding (WPF doesn't support direct binding for security reasons)
         ApiKeyPasswordBox.Password = _viewModel.Key;
         ApiKeyPasswordBox.PasswordChanged += (s, e) => _viewModel.Key = ApiKeyPasswordBox.Password;
-        
+
         // Update password box when view model key changes
         _viewModel.PropertyChanged += (s, e) =>
         {

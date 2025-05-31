@@ -61,7 +61,8 @@ namespace SpeechAgent.UI
                     ? "Recording... Click the microphone to stop."
                     : "Recording stopped. Processing...";
             });
-        }        private async void RecordToggleButton_Click(object sender, RoutedEventArgs e)
+        }
+        private async void RecordToggleButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -224,9 +225,9 @@ namespace SpeechAgent.UI
             _recordedAudio?.Dispose();
             base.OnClosed(e);
         }        /// <summary>
-        /// Transcribes large audio by splitting into 500-second chunks and combining results.
-        /// </summary>
-        /// <returns>A tuple containing the raw combined transcript and the corrected combined transcript</returns>
+                 /// Transcribes large audio by splitting into 500-second chunks and combining results.
+                 /// </summary>
+                 /// <returns>A tuple containing the raw combined transcript and the corrected combined transcript</returns>
         private async Task<(string RawTranscript, string CorrectedTranscript)> TranscribeWithChunksAsync(Stream audioStream)
         {
             // recordings folder for final outputs
@@ -291,15 +292,15 @@ namespace SpeechAgent.UI
 
             Dispatcher.Invoke(() => StatusText.Text = "Combining transcripts...");
             // cleanup
-            Directory.Delete(tempDir, true);            var combinedRaw = string.Join(Environment.NewLine, rawChunks.Where(t => !string.IsNullOrWhiteSpace(t)));
+            Directory.Delete(tempDir, true); var combinedRaw = string.Join(Environment.NewLine, rawChunks.Where(t => !string.IsNullOrWhiteSpace(t)));
             var combinedCorrected = string.Join(Environment.NewLine, correctedChunks.Where(t => !string.IsNullOrWhiteSpace(t)));
             await FileStorageHelper.SaveTextToFileAsync(baseDir, $"{sourceName}_combined.txt", combinedRaw);
             await FileStorageHelper.SaveTextToFileAsync(baseDir, $"{sourceName}_combined_corrected.txt", combinedCorrected);
 
             return (combinedRaw, combinedCorrected);
         }        /// <summary>
-        /// Automatically transcribes and corrects recorded audio.
-        /// </summary>
+                 /// Automatically transcribes and corrects recorded audio.
+                 /// </summary>
         private async Task ProcessRecordedAudioAsync()
         {
             if (_recordedAudio == null) return;
@@ -316,7 +317,7 @@ namespace SpeechAgent.UI
             {
                 ShowProgress("Transcribing audio...");
                 if (_recordedAudio.CanSeek) _recordedAudio.Position = 0;
-                
+
                 // TranscribeWithChunksAsync now returns a tuple with both raw and corrected text
                 var (transcript, corrected) = await TranscribeWithChunksAsync(_recordedAudio);
                 if (string.IsNullOrWhiteSpace(transcript))
@@ -506,14 +507,14 @@ namespace SpeechAgent.UI
                         Owner = this
                     };
                     settingsWindow.ShowDialog();
-                    
+
                     // Re-check settings after dialog
                     return _settingsService.AreSettingsValid();
                 }
-                
+
                 return false;
             }
-            
+
             return true;
         }
     }

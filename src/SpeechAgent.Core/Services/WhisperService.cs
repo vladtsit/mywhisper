@@ -23,14 +23,14 @@ public class WhisperService : ITranscriptionService
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
+
         // Subscribe to settings changes to refresh the OpenAI client
         _settingsService.SettingsChanged += (_, _) => RefreshClient();
-        
+
         // Initialize the client with current settings
         RefreshClient();
     }
-    
+
     /// <summary>
     /// Refresh the OpenAI client with the latest settings
     /// </summary>
@@ -39,13 +39,13 @@ public class WhisperService : ITranscriptionService
         try
         {
             var settings = _settingsService.CurrentSettings;
-            
+
             if (string.IsNullOrEmpty(settings.Endpoint))
                 throw new InvalidOperationException("Azure OpenAI endpoint not configured");
-                
+
             if (string.IsNullOrEmpty(settings.Key))
                 throw new InvalidOperationException("Azure OpenAI key not configured");
-                
+
             _openAIClient = new OpenAIClient(new Uri(settings.Endpoint), new AzureKeyCredential(settings.Key));
             _logger.LogDebug($"WhisperService: OpenAI client refreshed with endpoint: {settings.Endpoint}");
         }
@@ -55,10 +55,10 @@ public class WhisperService : ITranscriptionService
             _openAIClient = null;
         }
     }    /// <summary>
-    /// Transcribes audio stream using Azure OpenAI Whisper
-    /// </summary>
-    /// <param name="audioStream">Audio stream to transcribe</param>
-    /// <returns>Transcribed text</returns>
+         /// Transcribes audio stream using Azure OpenAI Whisper
+         /// </summary>
+         /// <param name="audioStream">Audio stream to transcribe</param>
+         /// <returns>Transcribed text</returns>
     public async Task<string> TranscribeAsync(Stream audioStream)
     {
         if (audioStream == null)
@@ -73,11 +73,11 @@ public class WhisperService : ITranscriptionService
 
         if (string.IsNullOrEmpty(deploymentName))
             throw new InvalidOperationException("Whisper deployment name not configured");
-            
+
         // Ensure client is initialized
         if (_openAIClient == null)
             RefreshClient();
-            
+
         // Check client again after refresh attempt
         if (_openAIClient == null)
             throw new InvalidOperationException("Could not initialize OpenAI client");
@@ -91,7 +91,7 @@ public class WhisperService : ITranscriptionService
         {
             audioStream.Position = 0; // Reset stream position
             _logger.LogDebug("WhisperService: Reset stream position to 0");
-            
+
             var audioTranscriptionOptions = new AudioTranscriptionOptions
             {
                 DeploymentName = deploymentName,
@@ -101,10 +101,10 @@ public class WhisperService : ITranscriptionService
 
             _logger.LogDebug("WhisperService: Sending request to Azure OpenAI...");
             var response = await _openAIClient.GetAudioTranscriptionAsync(audioTranscriptionOptions);
-            
+
             var result = response.Value.Text ?? string.Empty;
             _logger.LogInfo($"WhisperService: Transcription completed. Result: '{result}'");
-            
+
             return result;
         }
         catch (Exception ex)

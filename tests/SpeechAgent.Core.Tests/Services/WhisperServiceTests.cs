@@ -21,7 +21,7 @@ public class WhisperServiceTests
     {
         _mockSettingsService = new Mock<ISettingsService>();
         _mockLogService = new Mock<ILogService>();
-        
+
         // Set up test settings
         _testSettings = new AppSettings
         {
@@ -31,10 +31,10 @@ public class WhisperServiceTests
             CorrectionDeployment = "gpt-4",
             CorrectionPrompt = "Test correction prompt"
         };
-        
+
         // Configure the mock settings service
         _mockSettingsService.Setup(s => s.CurrentSettings).Returns(_testSettings);
-        
+
         _whisperService = new WhisperService(_mockSettingsService.Object, _mockLogService.Object);
     }
 
@@ -58,20 +58,21 @@ public class WhisperServiceTests
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new WhisperService(_mockSettingsService.Object, null!));
     }
-    
+
     [Test]
     public void TranscribeAsync_WithMissingDeployment_ShouldThrowInvalidOperationException()
     {
         // Arrange
         _testSettings.WhisperDeployment = string.Empty;
         using var testStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03 });
-        
+
         // Act & Assert
-        var exception = Assert.ThrowsAsync<InvalidOperationException>(() => 
+        var exception = Assert.ThrowsAsync<InvalidOperationException>(() =>
             _whisperService.TranscribeAsync(testStream));
-            
+
         Assert.That(exception.Message, Contains.Substring("Whisper deployment name not configured"));
-    }    [Test]
+    }
+    [Test]
     public void TranscribeAsync_WithNullStream_ShouldThrowArgumentNullException()
     {
         // Act & Assert
@@ -89,18 +90,18 @@ public class WhisperServiceTests
         var exception = Assert.ThrowsAsync<InvalidOperationException>(() => _whisperService.TranscribeAsync(emptyStream));
         Assert.That(exception.Message, Does.Contain("Failed to transcribe audio").Or.Contains("Could not initialize OpenAI client"));
     }
-    
+
     [Test]
     public void SettingsChanged_ShouldRefreshClient()
     {
         // Arrange
         _testSettings.Endpoint = "https://new-endpoint.openai.azure.com/";
         _testSettings.Key = "new-key";
-        
+
         // Act
-        _mockSettingsService.Raise(s => s.SettingsChanged += null, 
+        _mockSettingsService.Raise(s => s.SettingsChanged += null,
             _mockSettingsService.Object, _testSettings);
-            
+
         // Assert
         // This test just verifies that no exception is thrown when settings change
         Assert.Pass("Settings change handled without exception");

@@ -16,14 +16,14 @@ public class SettingsViewModel : INotifyPropertyChanged
     private readonly ISettingsService _settingsService;
     private AppSettings _settings;
     private bool _isSaving;
-    private string _statusMessage = string.Empty;    public SettingsViewModel(ISettingsService settingsService)
+    private string _statusMessage = string.Empty; public SettingsViewModel(ISettingsService settingsService)
     {
         _settingsService = settingsService;
         _settings = _settingsService.CurrentSettings.Clone();
 
         // Ensure settings are loaded properly
-        if (string.IsNullOrEmpty(_settings.Endpoint) || 
-            string.IsNullOrEmpty(_settings.WhisperDeployment) || 
+        if (string.IsNullOrEmpty(_settings.Endpoint) ||
+            string.IsNullOrEmpty(_settings.WhisperDeployment) ||
             string.IsNullOrEmpty(_settings.CorrectionDeployment))
         {
             // Load settings asynchronously but wait for result
@@ -154,7 +154,7 @@ public class SettingsViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event EventHandler? CloseRequested;
-    public event EventHandler? SettingsSaved;    private async Task SaveSettingsAsync()
+    public event EventHandler? SettingsSaved; private async Task SaveSettingsAsync()
     {
         try
         {
@@ -210,11 +210,12 @@ public class SettingsViewModel : INotifyPropertyChanged
     private void Cancel()
     {
         CloseRequested?.Invoke(this, EventArgs.Empty);
-    }    private void ResetToDefaults()
+    }
+    private void ResetToDefaults()
     {
         // Reset to default empty settings since we no longer use appsettings.json
         var defaultSettings = _settingsService.LoadDefaultSettings();
-        
+
         // Apply the default settings to the UI
         Endpoint = defaultSettings.Endpoint;
         Key = defaultSettings.Key;

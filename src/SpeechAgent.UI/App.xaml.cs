@@ -13,11 +13,13 @@ namespace SpeechAgent.UI;
 /// Interaction logic for App.xaml
 /// </summary>
 public partial class App : Application
-{    private IHost? _host;
+{
+    private IHost? _host;
     private ILogger<App>? _logger;
 
-    protected override async void OnStartup(StartupEventArgs e)    {
-        base.OnStartup(e);        var builder = new HostBuilder()
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e); var builder = new HostBuilder()
             .ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
@@ -34,16 +36,16 @@ public partial class App : Application
                 services.AddSingleton<IClipboardService, ClipboardService>();
                 services.AddSingleton<ICorrectionService, OpenAiCorrectionService>();
                 services.AddSingleton<ITranscriptionService, WhisperService>();
-                
+
                 // Register main window and other windows
                 services.AddSingleton<MainWindow>();
                 services.AddTransient<SpeechAgent.UI.Views.RuntimeLogsWindow>();
                 services.AddTransient<SettingsWindow>();
-            });        _host = builder.Build();
+            }); _host = builder.Build();
         _logger = _host.Services.GetRequiredService<ILogger<App>>();
-        
+
         _logger.LogInformation("SpeechAgent starting up...");
-        
+
         // Initialize settings service
         var settingsService = _host.Services.GetRequiredService<ISettingsService>();
         await settingsService.LoadSettingsAsync();
@@ -62,10 +64,11 @@ public partial class App : Application
             mainWindow.Show();
             _logger.LogInformation("Main window created and shown");
         }
-    }    private void ShowSettingsWindowFirst(ISettingsService settingsService)
+    }
+    private void ShowSettingsWindowFirst(ISettingsService settingsService)
     {
         bool settingsConfigured = false;
-        
+
         while (!settingsConfigured)
         {
             var settingsWindow = _host?.Services.GetRequiredService<SettingsWindow>();
@@ -75,7 +78,7 @@ public partial class App : Application
                 Shutdown();
                 return;
             }
-            
+
             // Subscribe to the SettingsSaved event to open main window immediately when settings are saved
             bool mainWindowOpened = false;
             settingsWindow.SettingsSaved += (s, e) =>
@@ -89,15 +92,15 @@ public partial class App : Application
                     mainWindow?.Show();
                 }
             };
-            
+
             // Show a message that settings must be configured
-            MessageBox.Show("Welcome to Speech Agent!\n\nBefore you can use the application, you need to configure your Azure OpenAI settings.\n\nThe settings window will open next.", 
-                          "Initial Setup Required", 
-                          MessageBoxButton.OK, 
+            MessageBox.Show("Welcome to Speech Agent!\n\nBefore you can use the application, you need to configure your Azure OpenAI settings.\n\nThe settings window will open next.",
+                          "Initial Setup Required",
+                          MessageBoxButton.OK,
                           MessageBoxImage.Information);
-            
+
             var result = settingsWindow.ShowDialog();
-            
+
             // Check if settings are now valid (in case user closed window without saving)
             if (!settingsConfigured && settingsService.AreSettingsValid())
             {
@@ -108,11 +111,11 @@ public partial class App : Application
             }
             else if (!settingsConfigured)
             {
-                var exitResult = MessageBox.Show("Settings are still not properly configured.\n\nThe application requires valid Azure OpenAI settings to function.\n\nWould you like to try again or exit the application?", 
-                                                "Settings Required", 
-                                                MessageBoxButton.YesNo, 
+                var exitResult = MessageBox.Show("Settings are still not properly configured.\n\nThe application requires valid Azure OpenAI settings to function.\n\nWould you like to try again or exit the application?",
+                                                "Settings Required",
+                                                MessageBoxButton.YesNo,
                                                 MessageBoxImage.Warning);
-                
+
                 if (exitResult == MessageBoxResult.No)
                 {
                     _logger?.LogInformation("User chose to exit application due to missing settings");
@@ -121,7 +124,8 @@ public partial class App : Application
                 }
             }
         }
-    }protected override void OnExit(ExitEventArgs e)
+    }
+    protected override void OnExit(ExitEventArgs e)
     {
         _logger?.LogInformation("Application exiting...");
         _host?.Dispose();

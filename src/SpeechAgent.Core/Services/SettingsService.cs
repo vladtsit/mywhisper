@@ -35,8 +35,8 @@ public class SettingsService : ISettingsService
         // Ensure settings directory exists
         Directory.CreateDirectory(_settingsDirectory);
     }    /// <summary>
-    /// Loads settings from encrypted storage or returns default empty settings
-    /// </summary>
+         /// Loads settings from encrypted storage or returns default empty settings
+         /// </summary>
     public async Task<AppSettings> LoadSettingsAsync()
     {
         try
@@ -86,19 +86,19 @@ public class SettingsService : ISettingsService
             throw;
         }
     }    /// <summary>
-    /// Checks if user settings exist in encrypted storage
-    /// </summary>
+         /// Checks if user settings exist in encrypted storage
+         /// </summary>
     public bool UserSettingsExist()
     {
         return File.Exists(_settingsFilePath);
     }
-      /// <summary>
+    /// <summary>
     /// Checks if settings are properly configured for the application to work
     /// </summary>
     public bool AreSettingsValid(AppSettings? settings = null)
     {
         var settingsToCheck = settings ?? _currentSettings;
-        
+
         return !string.IsNullOrWhiteSpace(settingsToCheck.Endpoint) &&
                !string.IsNullOrWhiteSpace(settingsToCheck.Key) &&
                !string.IsNullOrWhiteSpace(settingsToCheck.WhisperDeployment) &&

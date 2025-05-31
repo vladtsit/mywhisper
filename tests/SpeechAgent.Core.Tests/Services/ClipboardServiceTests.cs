@@ -17,7 +17,8 @@ public class ClipboardServiceTests
     public void Setup()
     {
         _clipboardService = new ClipboardService();
-    }    [Test]
+    }
+    [Test]
     public void CopyToClipboard_WithValidText_ShouldNotThrow()
     {
         // Arrange
@@ -39,11 +40,13 @@ public class ClipboardServiceTests
             // Skip test if running in environment without clipboard access
             Assert.Inconclusive("Test skipped due to clipboard access restrictions in test environment");
         }
-    }    [Test]
+    }
+    [Test]
     public void CopyToClipboard_WithNullText_ShouldNotThrow()
     {        // Act & Assert
         Assert.DoesNotThrowAsync(async () => await _clipboardService.CopyToClipboardAsync(null!));
-    }    [Test]
+    }
+    [Test]
     public void CopyToClipboard_WithEmptyText_ShouldNotThrow()
     {
         // Act & Assert

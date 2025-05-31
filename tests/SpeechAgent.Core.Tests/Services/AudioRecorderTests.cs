@@ -18,7 +18,7 @@ public class AudioRecorderTests
     public void Setup()
     {
         _mockLogService = new Mock<ILogService>();
-        
+
         // Use mock implementation for CI-safe testing
         _audioRecorder = new MockAudioRecorder();
     }
@@ -27,7 +27,8 @@ public class AudioRecorderTests
     public void TearDown()
     {
         _audioRecorder?.Dispose();
-    }    [Test]
+    }
+    [Test]
     public void IsRecording_InitialState_ReturnsFalse()
     {
         // Arrange & Act & Assert
@@ -49,10 +50,10 @@ public class AudioRecorderTests
     {
         // Arrange
         await _audioRecorder.StartRecordingAsync();
-        
+
         // Act
         await _audioRecorder.StartRecordingAsync(); // Start again
-        
+
         // Assert
         Assert.That(_audioRecorder.IsRecording, Is.True);
     }
@@ -110,7 +111,7 @@ public class AudioRecorderTests
     {
         // Arrange
         await _audioRecorder.StartRecordingAsync();
-        
+
         bool eventFired = false;
         bool eventValue = true;
         _audioRecorder.RecordingStateChanged += (sender, isRecording) =>

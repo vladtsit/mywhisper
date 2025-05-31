@@ -47,12 +47,12 @@ public class MockAudioRecorder : IAudioRecorder, IDisposable
             // Create a minimal valid WAV file header + some dummy audio data
             var wavHeader = CreateWavHeader(1000); // 1000 bytes of audio data
             stream.Write(wavHeader);
-            
+
             // Add some dummy audio data
             var dummyAudioData = new byte[1000];
             new Random().NextBytes(dummyAudioData);
             stream.Write(dummyAudioData);
-            
+
             stream.Position = 0;
         }
 

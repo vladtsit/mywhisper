@@ -25,25 +25,25 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
         InitializeComponent();
         _logService = logService ?? throw new ArgumentNullException(nameof(logService));
         _clipboardService = clipboardService ?? throw new ArgumentNullException(nameof(clipboardService));
-        
+
         _filteredLogEntries = new ObservableCollection<LogEntry>();
-        
+
         DataContext = this;
-        
+
         // Set default selection
         LogLevelFilter.SelectedIndex = 0; // "All"
-        
+
         // Subscribe to log service events
         _logService.LogAdded += OnLogAdded;
         _logService.PropertyChanged += OnLogServicePropertyChanged;
-        
+
         // Subscribe to list box events for auto-scroll and copy functionality
         LogsListBox.MouseDoubleClick += LogsListBox_MouseDoubleClick;
         LogLevelFilter.SelectionChanged += LogLevelFilter_SelectionChanged;
-        
+
         // Load existing logs
         RefreshFilteredLogs();
-        
+
         Loaded += RuntimeLogsWindow_Loaded;
     }
 
@@ -106,7 +106,7 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
             {
                 FilteredLogEntries.Add(logEntry);
                 OnPropertyChanged(nameof(LogCount));
-                
+
                 // Auto-scroll to bottom if enabled
                 if (AutoScrollEnabled)
                 {
@@ -131,15 +131,15 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
     {
         var allLogs = _logService.LogEntries;
         var filteredLogs = allLogs.Where(ShouldIncludeLogEntry).ToList();
-        
+
         FilteredLogEntries.Clear();
         foreach (var log in filteredLogs)
         {
             FilteredLogEntries.Add(log);
         }
-        
+
         OnPropertyChanged(nameof(LogCount));
-        
+
         // Auto-scroll to bottom if enabled
         if (AutoScrollEnabled && FilteredLogEntries.Count > 0)
         {
@@ -154,7 +154,7 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
     {
         if (SelectedLogLevel == "All")
             return true;
-            
+
         return logEntry.Level.ToString() == SelectedLogLevel;
     }
 
@@ -165,7 +165,7 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
             SelectedLogLevel = selectedItem.Tag?.ToString() ?? "All";
         }
     }
-    
+
     private async void LogsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (LogsListBox.SelectedItem is LogEntry selectedLog)
@@ -174,56 +174,56 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
             {
                 await _clipboardService.CopyToClipboardAsync(selectedLog.FormattedMessage);
                 // Show a brief status message
-                MessageBox.Show("Log entry copied to clipboard!", "Copied", 
+                MessageBox.Show("Log entry copied to clipboard!", "Copied",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to copy to clipboard: {ex.Message}", "Error", 
+                MessageBox.Show($"Failed to copy to clipboard: {ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
-    
+
     private void ClearButton_Click(object sender, RoutedEventArgs e)
     {
-        var result = MessageBox.Show("Are you sure you want to clear all logs?", "Clear Logs", 
+        var result = MessageBox.Show("Are you sure you want to clear all logs?", "Clear Logs",
             MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
+
         if (result == MessageBoxResult.Yes)
         {
             _logService.ClearLogs();
         }
     }
-    
+
     private async void CopyAllButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             if (FilteredLogEntries.Count == 0)
             {
-                MessageBox.Show("No log entries to copy.", "Information", 
+                MessageBox.Show("No log entries to copy.", "Information",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             // Build a string containing all log entries
-            var allLogs = string.Join(Environment.NewLine, 
+            var allLogs = string.Join(Environment.NewLine,
                 FilteredLogEntries.Select(log => log.FormattedMessage));
 
             await _clipboardService.CopyToClipboardAsync(allLogs);
-            
+
             // Show a brief status message
-            MessageBox.Show($"All {FilteredLogEntries.Count} log entries copied to clipboard!", "Success", 
+            MessageBox.Show($"All {FilteredLogEntries.Count} log entries copied to clipboard!", "Success",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to copy logs to clipboard: {ex.Message}", "Error", 
+            MessageBox.Show($"Failed to copy logs to clipboard: {ex.Message}", "Error",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    
+
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
         Close();
@@ -234,7 +234,7 @@ public partial class RuntimeLogsWindow : Window, INotifyPropertyChanged
         // Unsubscribe from events
         _logService.LogAdded -= OnLogAdded;
         _logService.PropertyChanged -= OnLogServicePropertyChanged;
-        
+
         base.OnClosing(e);
     }
 

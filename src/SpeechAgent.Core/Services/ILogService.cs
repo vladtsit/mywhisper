@@ -65,7 +65,7 @@ public class LogEntry
     public string Message { get; init; } = string.Empty;
     public Exception? Exception { get; init; }
 
-    public string FormattedMessage => 
+    public string FormattedMessage =>
         $"[{Timestamp:HH:mm:ss.fff}] [{Level}] [{Component}] {Message}" +
         (Exception != null ? $"\nException: {Exception}" : "");
 }

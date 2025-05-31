@@ -32,7 +32,7 @@ public class ClipboardService : IClipboardService
         {
             // Silently handle clipboard access issues (common in CI environments)
         }
-        
+
         return Task.CompletedTask;
     }
 }

@@ -7,10 +7,10 @@ namespace SpeechAgent.Core.Services;
 /// </summary>
 public interface ISettingsService
 {    /// <summary>
-    /// Loads settings from encrypted storage or returns default empty settings
-    /// </summary>
+     /// Loads settings from encrypted storage or returns default empty settings
+     /// </summary>
     Task<AppSettings> LoadSettingsAsync();
-    
+
     /// <summary>
     /// Loads default settings (empty/minimal settings that require user configuration)
     /// </summary>

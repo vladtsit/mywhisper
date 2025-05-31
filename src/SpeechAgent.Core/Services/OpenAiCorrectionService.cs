@@ -38,13 +38,13 @@ public class OpenAiCorrectionService : ICorrectionService
         try
         {
             var settings = _settingsService.CurrentSettings;
-            
+
             if (string.IsNullOrEmpty(settings.Endpoint))
                 throw new InvalidOperationException("Azure OpenAI endpoint not configured");
-                
+
             if (string.IsNullOrEmpty(settings.Key))
                 throw new InvalidOperationException("Azure OpenAI key not configured");
-                
+
             _openAIClient = new OpenAIClient(new Uri(settings.Endpoint), new AzureKeyCredential(settings.Key));
             _logger.LogDebug($"OpenAI client refreshed with endpoint: {settings.Endpoint}");
         }
@@ -54,10 +54,10 @@ public class OpenAiCorrectionService : ICorrectionService
             _openAIClient = null;
         }
     }    /// <summary>
-    /// Corrects and improves the provided raw text using Azure OpenAI
-    /// </summary>
-    /// <param name="rawText">The text to correct</param>
-    /// <returns>Corrected text</returns>
+         /// Corrects and improves the provided raw text using Azure OpenAI
+         /// </summary>
+         /// <param name="rawText">The text to correct</param>
+         /// <returns>Corrected text</returns>
     public async Task<string> CorrectAsync(string rawText)
     {
         if (rawText == null)
@@ -108,7 +108,7 @@ public class OpenAiCorrectionService : ICorrectionService
                 MaxTokens = 16000,
                 Temperature = 0.1f
             };
-            
+
             _logger.LogDebug("OpenAiCorrectionService: Sending request to Azure OpenAI...");
             var response = await _openAIClient.GetChatCompletionsAsync(chatCompletionsOptions);
 
