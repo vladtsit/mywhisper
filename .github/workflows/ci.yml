@@ -30,7 +30,7 @@ jobs:
       run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Debug --no-restore
 
     - name: Run tests
-      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Debug --no-build --verbosity normal --logger trx --results-directory TestResults/
+      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Debug --no-build --verbosity normal --logger trx --results-directory TestResults/ --filter "Category!=Hardware"
 
     - name: Upload test results
       uses: actions/upload-artifact@v4

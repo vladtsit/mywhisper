@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SpeechAgent.Core.Services;
 
-public interface IAudioRecorder
+public interface IAudioRecorder : IDisposable
 {
     event EventHandler<bool> RecordingStateChanged;
     bool IsRecording { get; }
